@@ -12,7 +12,7 @@ class App extends ConsoleMenu {
         super(title);
     }
 
-    @MenuOption(title = "Help", pattern = "h")
+    @MenuOption(name = "Help", pattern = "h")
     public void help() {
         // Clears the console output
         clear();
@@ -20,7 +20,7 @@ class App extends ConsoleMenu {
         Thread.sleep(3000);
     }
 
-    @MenuOption(title = "Quit", pattern = "q")
+    @MenuOption(name = "Quit", pattern = "q")
     public void help(Object[] args) {
         // Sets the run variable of the main loop to false.
         args[0] = false;
