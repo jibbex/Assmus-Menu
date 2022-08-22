@@ -82,16 +82,14 @@ public class Option {
      * @throws NoSuchMethodException
      * @throws InstantiationException
      */
-    public void invoke(Object[] args) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
+    public void invoke(Object[] args, ConsoleMenu inst) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
         Object[] params = {};
-        Class<?> methodClass = action.getDeclaringClass();
-        ConsoleMenu instance = (ConsoleMenu) methodClass.getConstructor().newInstance();
 
         if (action.getParameterCount() > 0) {
             params = new Object[]{args};
-            action.invoke(instance, params);
+            action.invoke(inst, params);
         } else {
-            action.invoke(instance, params);
+            action.invoke(inst, params);
         }
     }
 

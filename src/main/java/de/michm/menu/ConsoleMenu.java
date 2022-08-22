@@ -220,7 +220,7 @@ public class ConsoleMenu {
 
                          */
                         Object[] args = { run, reader };
-                        option.invoke(args);
+                        option.invoke(args, this);
                         // Reads back run variable
                         run = (Boolean) args[0];
                     }
