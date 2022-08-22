@@ -35,12 +35,12 @@ import java.util.ArrayList;
  *             super(title);
  *         }
  *
- *         @MenuOption(title = "Help", pattern = "h")
+ *         @MenuOption(name = "Help", pattern = "h")
  *         public void help() {
  *             System.out.println("Author: Manfred Michaelis <mm@michm.de>");
  *         }
  *
- *         @MenuOption(title = "Quit", pattern = "q")
+ *         @MenuOption(name = "Quit", pattern = "q")
  *         public void help(Object[] args) {
  *              args[0] = false;
  *         }
