@@ -201,7 +201,7 @@ public class AssmusMenu {
      */
     private void render() throws IOException, InterruptedException {
         clear();
-        System.out.println("\n " + title + "\n " + getUnderline(title, 3));
+        System.out.println("\n " + title + "\n " + getUnderline(title, 2));
 
         for (Option option : options) {
             String optText = "   " +
@@ -246,6 +246,7 @@ public class AssmusMenu {
 
                 for (Option option : options) {
                     if (option.getPattern().equals(pattern)) {
+                        pattern = null;
                         Object[] args = new Object[option.getParameterCount()];
 
                         for (int i = 0; i < option.getParameterCount(); i++) {
@@ -254,8 +255,6 @@ public class AssmusMenu {
                             } else if (option.getParameterTypes()[i].getTypeName().equals("java.io.BufferedReader")) {
                                 args[i] = reader;
                             }
-
-                            args[i] = null;
                         }
                         
                         if (option.getReturnType().getTypeName().equals("boolean")) {
@@ -264,9 +263,7 @@ public class AssmusMenu {
                         } else {
                             option.invoke(this, args);
                         }
-
-                        break;
-                    } else if (onUnknownInput != null) {
+                    } else if (pattern != null && onUnknownInput != null) {
                         onUnknownInput.invoke(this);
                         break;
                     }
