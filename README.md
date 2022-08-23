@@ -1,13 +1,13 @@
-# Console Menu `(⌐■_■)`
-Generates from a set of annotated Methods a menu for your CLI application. Therefor the class ConsoleMenu 
-must be extended by a child class with the methods of the individual options. The annotation @MenuOption defines 
+# Assmus Menu `(⌐■_■)`
+Generates from a set of annotated Methods a menu for your CLI application. Therefor the class `AssmusMenu` 
+must be extended by a child class with the methods of the individual options. The annotation `@MenuOption` defines 
 the name in the menu and which string must be entered for the selection. You can now create an instance of your 
 derived class in the entry point method of your Java application and call the object's run method.
 
 ## Example
 *App.java*
 ```java
-class App extends ConsoleMenu {
+class App extends AssmusMenu {
     App(String title) {
         super(title);
     }
