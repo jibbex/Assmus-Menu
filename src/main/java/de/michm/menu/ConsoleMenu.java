@@ -54,9 +54,10 @@ import java.util.ArrayList;
  *     }
  * </code>
  */
+
 public class ConsoleMenu {
-    final private String title;
-    final private ArrayList<Option> options;
+    private final String title;
+    private final ArrayList<Option> options;
 
     /**
      * The constructor needs a title as String
