@@ -30,19 +30,19 @@ import java.util.ArrayList;
  * of your Java application and call the object's run method.
  *
  * <code>
- *     class App extends ConsoleMenu {
+ *     class App extends AssmusMenu {
  *         App(String title) {
  *             super(title);
  *         }
  *
- *         @MenuOption(name = "Help", pattern = "h")
- *         public void help() {
+ *         @MenuOption(name = "Info", pattern = "i")
+ *         public void info() {
  *             System.out.println("Author: Manfred Michaelis <mm@michm.de>");
  *         }
  *
  *         @MenuOption(name = "Quit", pattern = "q")
- *         public void help(Object[] args) {
- *              args[0] = false;
+ *         public boolean quit() {
+ *              return false;
  *         }
  *     }
  *
@@ -199,6 +199,12 @@ public class AssmusMenu {
      *           }
      *       }
      * </code>
+     *
+     * The run variable of the main loop, the BufferedReader instance,
+     * both or nothing is passed to the called method.
+     *
+     * If the return type of the invoked method is boolean, the run
+     * variable will be set to the return value.
      */
     public void run() {
         InputStreamReader inStream = new InputStreamReader(System.in);
@@ -212,17 +218,9 @@ public class AssmusMenu {
 
                 for (Option option : options) {
                     if (option.getPattern().equals(pattern)) {
-                        /*
-                            An array of Object with the main loops run
-                            variable and the BufferedReader instance
-                            or nothing will be passed to the invoked
-                            method.
-
-                         */
                         Object[] args = new Object[option.getParameterCount()];
 
                         for (int i = 0; i < option.getParameterCount(); i++) {
-                            System.out.println(option.getParameterTypes()[i].getTypeName());
                             if (option.getParameterTypes()[i].getTypeName().equals("boolean")) {
                                 args[i] = run;
                             } else if (option.getParameterTypes()[i].getTypeName().equals("java.io.BufferedReader")) {
