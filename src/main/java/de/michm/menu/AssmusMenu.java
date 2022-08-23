@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.rmi.AlreadyBoundException;
 import java.util.ArrayList;
 
 /**
@@ -57,18 +58,20 @@ import java.util.ArrayList;
 public class AssmusMenu {
     final private String title;
     final private ArrayList<Option> options;
+    final private Method onUnknownInput;
 
     /**
      * The constructor needs a title as String
      *
      * @param title <String>
      */
-    public AssmusMenu(String title) {
+    public AssmusMenu(String title) throws AlreadyBoundException {
         this.title = title;
         this.options = new ArrayList<>();
 
         Class<? extends AssmusMenu> obj = this.getClass();
         Method[] methods = obj.getDeclaredMethods();
+        Method unknownInput = null;
 
         for (Method method : methods) {
             Annotation[] annotations = method.getAnnotations();
@@ -79,9 +82,19 @@ public class AssmusMenu {
                     String pattern = ((MenuOption) annotation).pattern();
 
                     add(new Option(name, pattern, method));
+                } else if (annotation instanceof OnUnknownInput) {
+                    if (unknownInput == null) {
+                        unknownInput = method;
+                    } else {
+                        throw new AlreadyBoundException(
+                            "Only one method with @OnUnknownInput annotation is possible."
+                        );
+                    }
                 }
             }
         }
+
+        this.onUnknownInput = unknownInput;
     }
 
     /**
@@ -222,10 +235,12 @@ public class AssmusMenu {
 
                         for (int i = 0; i < option.getParameterCount(); i++) {
                             if (option.getParameterTypes()[i].getTypeName().equals("boolean")) {
-                                args[i] = run;
+                                args[i] = true;
                             } else if (option.getParameterTypes()[i].getTypeName().equals("java.io.BufferedReader")) {
                                 args[i] = reader;
                             }
+
+                            args[i] = null;
                         }
                         
                         if (option.getReturnType().getTypeName().equals("boolean")) {
@@ -234,13 +249,18 @@ public class AssmusMenu {
                         } else {
                             option.invoke(this, args);
                         }
+
+                        break;
+                    } else if (onUnknownInput != null) {
+                        onUnknownInput.invoke(this);
+                        break;
                     }
                 }
             }
 
             reader.close();
         } catch (Exception e) {
-            System.err.println(e);
+            e.getStackTrace();
         }
     }
 }
