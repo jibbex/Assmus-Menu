@@ -33,9 +33,13 @@ class App extends AssmusMenu {
 ```java
 class Main {
     public static void main(String[] args) {
-        App app = new App("MY COOL CLI APP");
-        // Starts the application.
-        app.run();
+        try {
+            App app = new App("MY COOL CLI APP");
+            // Starts the application.
+            app.run();
+        } catch (Exception e) {
+            System.err.println(e.getLocalizedMessage());
+        }
     }
 }
 ```
@@ -63,6 +67,23 @@ it declares a parameter of the particular type.
 The annotated method must have a return type of `void` or `boolean`.
 If the type is `boolean`, the run variable of the main loop will be
 set to the return value of the method.
+
+## OnUnknownInput
+With `@OnUnknownInput` annotation it is possible to define **1** method 
+to handle unexpected user input.
+
+```java
+class App extends AssmusMenu {
+    App(String title) {
+        super(title);
+    }
+    
+    @OnUnknownInput
+    public void onError() {
+        System.err.println("Your input couldn't recognized.");
+    }
+}
+```
 
 ---
 
