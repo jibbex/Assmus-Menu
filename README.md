@@ -21,9 +21,10 @@ class App extends AssmusMenu {
     }
 
     @MenuOption(name = "Quit", pattern = "q")
-    public void help(Object[] args) {
-        // Sets the run variable of the main loop to false.
-        args[0] = false;
+    public boolean quit() {
+        // If a boolean is returned, the run variable
+        // of the main loop will be set to its value.
+        return false;
     }
 }
 ```
@@ -48,6 +49,20 @@ class Main {
 
  >
 ```
+
+## Method parameters
+Following parameter will be passed to the called method if 
+it declares a parameter of the particular type.
+
+| Type           | Passed Object                   |
+|----------------|---------------------------------|
+| boolean        | run variable of main loop       |
+| BufferedReader | An instance of a BufferedReader |
+
+## Return types
+The annotated method must have a return type of `void` or `boolean`.
+If the type is `boolean`, the run variable of the main loop will be
+set to the return value of the method.
 
 ---
 
