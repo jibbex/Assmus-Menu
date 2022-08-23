@@ -163,6 +163,21 @@ public class AssmusMenu {
     }
 
     /**
+     * Creates an underline consisting of "=" for the passed
+     * String. Multiplies size x times of the original length.
+     * @param text <String>
+     * @param multiplier <int> length x times
+     * @return <String>
+     */
+    private String getUnderline(String text, int multiplier) {
+        String underline = getUnderline(text);
+        for (int i = 0; i < multiplier; i++) {
+            underline += underline;
+        }
+        return underline;
+    }
+
+    /**
      * Clears the console output.
      *
      * @throws IOException
@@ -186,7 +201,7 @@ public class AssmusMenu {
      */
     private void render() throws IOException, InterruptedException {
         clear();
-        System.out.println("\n " + title + "\n " + getUnderline(title) + getUnderline(title) + getUnderline(title));
+        System.out.println("\n " + title + "\n " + getUnderline(title, 3));
 
         for (Option option : options) {
             String optText = "   " +
