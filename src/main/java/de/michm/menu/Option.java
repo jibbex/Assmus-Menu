@@ -79,18 +79,36 @@ public class Option {
      * @param args <Object[]>
      * @throws InvocationTargetException
      * @throws IllegalAccessException
-     * @throws NoSuchMethodException
-     * @throws InstantiationException
      */
-    public void invoke(Object[] args, ConsoleMenu inst) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
-        Object[] params = {};
+    public Object invoke(AssmusMenu instance, Object[] args) throws InvocationTargetException, IllegalAccessException {
+        return action.invoke(instance, args);
+    }
 
-        if (action.getParameterCount() > 0) {
-            params = new Object[]{args};
-            action.invoke(inst, params);
-        } else {
-            action.invoke(inst, params);
-        }
+    /**
+     * Returns parameter count of the method.
+     *
+     * @return <int>
+     */
+    int getParameterCount() {
+        return action.getParameterCount();
+    }
+
+    /**
+     * Returns an array of parameter types
+     *
+     * @return <Class<?>[]>
+     */
+    Class<?>[] getParameterTypes() {
+        return action.getParameterTypes();
+    }
+
+    /**
+     * Returns the return type
+     *
+     * @return <Class<?>>
+     */
+    Class<?> getReturnType() {
+        return action.getReturnType();
     }
 
     @Override

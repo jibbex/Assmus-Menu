@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.michm</groupId>
-    <artifactId>ConsoleMenu</artifactId>
-    <version>0.6.2</version>
+    <artifactId>AssmusMenu</artifactId>
+    <version>0.6.6</version>
 
     <properties>
         <maven.compiler.source>18</maven.compiler.source>
@@ -25,7 +25,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>de.michm.menu.ConsoleMenu</mainClass>
+                            <mainClass>de.michm.menu.AssmusMenu</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

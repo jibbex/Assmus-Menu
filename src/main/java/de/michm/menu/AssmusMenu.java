@@ -54,21 +54,20 @@ import java.util.ArrayList;
  *     }
  * </code>
  */
-
-public class ConsoleMenu {
-    private final String title;
-    private final ArrayList<Option> options;
+public class AssmusMenu {
+    final private String title;
+    final private ArrayList<Option> options;
 
     /**
      * The constructor needs a title as String
      *
      * @param title <String>
      */
-    public ConsoleMenu(String title) {
+    public AssmusMenu(String title) {
         this.title = title;
         this.options = new ArrayList<>();
 
-        Class<? extends ConsoleMenu> obj = this.getClass();
+        Class<? extends AssmusMenu> obj = this.getClass();
         Method[] methods = obj.getDeclaredMethods();
 
         for (Method method : methods) {
@@ -220,10 +219,23 @@ public class ConsoleMenu {
                             method.
 
                          */
-                        Object[] args = { run, reader };
-                        option.invoke(args, this);
-                        // Reads back run variable
-                        run = (Boolean) args[0];
+                        Object[] args = new Object[option.getParameterCount()];
+
+                        for (int i = 0; i < option.getParameterCount(); i++) {
+                            System.out.println(option.getParameterTypes()[i].getTypeName());
+                            if (option.getParameterTypes()[i].getTypeName().equals("boolean")) {
+                                args[i] = run;
+                            } else if (option.getParameterTypes()[i].getTypeName().equals("java.io.BufferedReader")) {
+                                args[i] = reader;
+                            }
+                        }
+                        
+                        if (option.getReturnType().getTypeName().equals("boolean")) {
+                            // Reads back run variable
+                            run = (boolean) option.invoke(this, args);
+                        } else {
+                            option.invoke(this, args);
+                        }
                     }
                 }
             }
