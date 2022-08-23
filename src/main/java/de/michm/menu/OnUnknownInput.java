@@ -22,7 +22,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The
+ * The annotated method will be called on
+ * unknown user input.
  *
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
