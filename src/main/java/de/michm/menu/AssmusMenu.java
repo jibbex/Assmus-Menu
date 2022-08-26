@@ -16,13 +16,15 @@
 
 package de.michm.menu;
 
-import java.io.BufferedReader;
+import de.michm.scanner.PoggyScanner;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.rmi.AlreadyBoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * The class ConsoleMenu is extended by a child class with the methods of the individual options.
@@ -59,6 +61,7 @@ public class AssmusMenu {
     final private String title;
     final private ArrayList<Option> options;
     final private Method onUnknownInput;
+    final private PoggyScanner poggyScanner;
 
     /**
      * The constructor needs a title as String
@@ -95,6 +98,7 @@ public class AssmusMenu {
         }
 
         this.onUnknownInput = unknownInput;
+        this.poggyScanner = new PoggyScanner(System.in);
     }
 
     /**
@@ -235,44 +239,82 @@ public class AssmusMenu {
      * variable will be set to the return value.
      */
     public void run() {
-        InputStreamReader inStream = new InputStreamReader(System.in);
-        BufferedReader reader = new BufferedReader(inStream);
         boolean run = true;
 
         try {
             while (run) {
                 render();
-                String pattern = reader.readLine();
 
-                for (Option option : options) {
-                    if (option.getPattern().equals(pattern)) {
-                        pattern = null;
-                        Object[] args = new Object[option.getParameterCount()];
+                String pattern = read(String.class);
 
-                        for (int i = 0; i < option.getParameterCount(); i++) {
-                            if (option.getParameterTypes()[i].getTypeName().equals("boolean")) {
-                                args[i] = true;
-                            } else if (option.getParameterTypes()[i].getTypeName().equals("java.io.BufferedReader")) {
-                                args[i] = reader;
+                if (pattern != null && onUnknownInput != null) {
+                    onUnknownInput.invoke(this);
+                } else {
+                    for (Option option : options) {
+                        if (option.getPattern().equals(pattern)) {
+                            pattern = null;
+                            Object[] args = new Object[]{};
+
+                            if (option.getReturnType().getTypeName().equals("boolean")) {
+                                // Reads back run variable
+                                run = !((boolean) option.invoke(this, args));
+                            } else {
+                                option.invoke(this, args);
                             }
                         }
-                        
-                        if (option.getReturnType().getTypeName().equals("boolean")) {
-                            // Reads back run variable
-                            run = (boolean) option.invoke(this, args);
-                        } else {
-                            option.invoke(this, args);
-                        }
-                    } else if (pattern != null && onUnknownInput != null) {
-                        onUnknownInput.invoke(this);
-                        break;
                     }
                 }
             }
-
-            reader.close();
+            poggyScanner.close();
         } catch (Exception e) {
-            e.getStackTrace();
+            System.err.println("Error: " + e);
+            System.err.println(Arrays.toString(e.getStackTrace()));
         }
+    }
+
+    /**
+     * Reads the user input from stdin and returns a
+     * value of type, which class was passed as
+     * parameter. In case of a String the line
+     * will be read.
+     *
+     * @param type Defines the return type.
+     * @return The stdin input as instance of passed [type].class.
+     *
+     * <code>
+     *     String name = read(String.class);
+     *     Integer age = read(Integer.class);
+     *     Double price = read(Double.class);
+     * </code>
+     */
+    protected  <T> T read(Class<?> type) {
+        T result = null;
+
+        try {
+            if (String.class.equals(type)) {
+                result = (T) poggyScanner.nextLine();
+            } else if (Integer.class.equals(type)) {
+                result = (T) poggyScanner.nextInt();
+            } else if (Long.class.equals(type)) {
+                result = (T) poggyScanner.nextLong();
+            } else if (Short.class.equals(type)) {
+                result = (T) poggyScanner.nextShort();
+            } else if (BigInteger.class.equals(type)) {
+                result = (T) poggyScanner.nextBigInteger();
+            } else if (Double.class.equals(type)) {
+                result = (T) poggyScanner.nextDouble();
+            } else if (BigDecimal.class.equals(type)) {
+                result = (T) poggyScanner.nextBigDecimal();
+            } else if (Boolean.class.equals(type)) {
+                result = (T) poggyScanner.nextBoolean();
+            } else if (Byte.class.equals(type)) {
+                result = (T) poggyScanner.nextByte();
+            }
+        } catch (Exception e) {
+            System.err.println("Error: " + e);
+            System.err.println(Arrays.toString(e.getStackTrace()));
+        }
+
+        return result;
     }
 }
