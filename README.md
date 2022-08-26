@@ -17,14 +17,18 @@ class App extends AssmusMenu {
         // Clears the console output
         clear();
         System.out.println("Hello World");
-        Thread.sleep(3000);
+        System.out.println("Hit any key to continue...");
+        read(String.class); 
     }
 
     @MenuOption(name = "Quit", pattern = "q")
     public boolean quit() {
+        clear();
+        System.out.print("Do you want to exit? (y/n): ");
+        String input = read(String.class);
         // If a boolean is returned, the run variable
         // of the main loop will be set to its value.
-        return false;
+        return input.equalsIgnoreCase("y");
     }
 }
 ```
@@ -54,19 +58,18 @@ class Main {
  >
 ```
 
-## Method parameters
-Following parameter will be passed to the called method if 
-it declares a parameter of the particular type.
+## Methods
+Following methods are implemented and can be called from the child class: 
 
-| Type           | Passed Object                   |
-|----------------|---------------------------------|
-| boolean        | run variable of main loop       |
-| BufferedReader | An instance of a BufferedReader |
+| Return type | Passed Object                                                   |
+|-------------|-----------------------------------------------------------------|
+| T           | `<T> read(Class<?>)` - Returns input as instance of passed Type |
+| void        | `clear()` - Clears console output                               |
 
 ## Return types
 The annotated method must have a return type of `void` or `boolean`.
 If the type is `boolean`, the run variable of the main loop will be
-set to the return value of the method.
+set to the inverted return value of the method.
 
 ## OnUnknownInput
 With `@OnUnknownInput` annotation it is possible to define **1** method 
