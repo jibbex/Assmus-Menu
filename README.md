@@ -63,10 +63,12 @@ class Main {
 
 Following methods are implemented and can be called from the child class: 
 
-| Return type | Passed Object                                                   |
-| ----------- | --------------------------------------------------------------- |
-| T           | `<T> read(Class<?>)` - Returns input as instance of passed Type |
-| void        | `clear()` - Clears console output                               |
+| Return type | Passed Object                                                                                                                       |
+|-------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| T           | `<T> read(Class<?>, String fmt, Object ... args)` - Prints formatted String as prompt and returns input as instance of passed Type. |
+| T           | `<T> read(Class<?>)` - Returns input as instance of passed Type.                                                                    |
+| void        | `printException(Exception e)` - Prints the passed Exception object and its stack trace.                                             |
+| void        | `clear()` - Clears console output.                                                                                                  |
 
 **Supported types of `<T> read(Class<?>)` are currently:** 
 * String
@@ -74,6 +76,7 @@ Following methods are implemented and can be called from the child class:
 * Integer
 * Long
 * Double
+* Float
 * Byte
 * Boolean
 * BigInteger
@@ -128,16 +131,6 @@ class App extends AssmusMenu {
         read(String.class);
     }
 }
-```
-
-## Dependencies
-
-Assmus Menu uses under the hood [PoggyScanner](https://git.michm.de/manne/poggy-scanner) for reading input.
-You have to add the local PoggyScanner.jar located in ./src/main/resources 
-to maven.
-
-```bash
-mvn install:install-file -Dfile=<path to PoggyScanner.jar> -DgroupId=de.michm.scanner -DartifactId=PoggyScanner -Dversion=1.0.0 -Dpackaging=jar -DgeneratePom=true -DcreateChecksum=true
 ```
 
 ---
