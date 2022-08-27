@@ -79,7 +79,7 @@ Following methods are implemented and can be called from the child class:
 * BigInteger
 * BigDecimal
 
-### Examples
+### Example
 
 ```java
 class App extends AssmusMenu {
