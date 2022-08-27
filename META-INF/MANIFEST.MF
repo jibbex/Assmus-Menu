@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: de.michm.menu.Main
+Export-Package: de.michm.menu;uses:="de.michm.menu.AssmusMenu,de.michm.menu.OnUnknownInput,MenuOption,Option"
+

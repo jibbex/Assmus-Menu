@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="PoggyScanner">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/src/main/java/PoggyScanner.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

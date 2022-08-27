@@ -16,15 +16,15 @@
 
 package de.michm.menu;
 
-import de.michm.scanner.PoggyScanner;
-import java.io.IOException;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.rmi.AlreadyBoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * The class ConsoleMenu is extended by a child class with the methods of the individual options.
@@ -61,7 +61,7 @@ public class AssmusMenu {
     final private String title;
     final private ArrayList<Option> options;
     final private Method onUnknownInput;
-    final private PoggyScanner poggyScanner;
+    final private BufferedReader reader;
 
     /**
      * The constructor needs a title as String
@@ -98,7 +98,7 @@ public class AssmusMenu {
         }
 
         this.onUnknownInput = unknownInput;
-        this.poggyScanner = new PoggyScanner(System.in);
+        this.reader = new BufferedReader(new InputStreamReader(System.in));
     }
 
     /**
@@ -178,11 +178,11 @@ public class AssmusMenu {
         for (int i = 0; i < multiplier; i++) {
             underline += underline;
         }
-        return underline;
+        return underline + "\n";
     }
 
     /**
-     * Clears the console output.
+     * Tries to clear stdout.
      *
      * @throws IOException
      * @throws InterruptedException
@@ -205,7 +205,7 @@ public class AssmusMenu {
      */
     private void render() throws IOException, InterruptedException {
         clear();
-        System.out.println("\n " + title + "\n " + getUnderline(title, 2));
+        System.out.printf("\n%s\n%s", title, getUnderline(title, 2));
 
         for (Option option : options) {
             String optText = "   " +
@@ -217,7 +217,7 @@ public class AssmusMenu {
             System.out.println(optText);
         }
 
-        System.out.print("\n > ");
+        System.out.flush();
     }
 
     /**
@@ -245,7 +245,7 @@ public class AssmusMenu {
             while (run) {
                 render();
                 boolean foundFlag = false;
-                String pattern = read(String.class);
+                String pattern = read(String.class, "\n > ");
 
                 if (pattern != null) {
                     for (Option option : options) {
@@ -268,11 +268,65 @@ public class AssmusMenu {
                     }
                 }
             }
-            poggyScanner.close();
         } catch (Exception e) {
-            System.err.println("Error: " + e);
-            System.err.println(Arrays.toString(e.getStackTrace()));
+            printException(e);
         }
+    }
+
+    /**
+     * Reads the user input from stdin and returns a
+     * value of type, which class was passed as
+     * parameter. In case of a String the line
+     * will be read.
+     *
+     * @param type Defines the return type.
+     * @param fmt A formatted String prompt.
+     * @param args Variables of the formatted String.
+     * @return The stdin input as instance of passed [type].class.
+     *
+     * <code>
+     *     String name = read(String.class, "name: ");
+     *     Integer age = read(Integer.class, "age: ");
+     *     Double price = read(Double.class, "price: ");
+     * </code>
+     */
+    protected  <T> T read(@NotNull Class<T> type, String fmt, Object ... args) {
+        String input;
+        T result = null;
+
+        if (fmt != null) {
+            System.out.printf(fmt, args);
+        }
+
+        try {
+            input = reader.readLine();
+
+            if (String.class.equals(type)) {
+                result = type.cast(input);
+            } else if (Integer.class.equals(type)) {
+                result = type.cast(Integer.valueOf(input));
+            } else if (Long.class.equals(type)) {
+                result = type.cast(Long.valueOf(input));
+            } else if (Short.class.equals(type)) {
+                result = type.cast(Short.valueOf(input));
+            } else if (BigInteger.class.equals(type)) {
+                result = type.cast(new BigInteger(input));
+            } else if (Double.class.equals(type)) {
+                result = type.cast(Double.valueOf(input));
+            } else if (Float.class.equals(type)) {
+                result = type.cast(Float.valueOf(input));
+            } else if (BigDecimal.class.equals(type)) {
+                result = type.cast(new BigDecimal(input));
+            } else if (Boolean.class.equals(type)) {
+                result = type.cast(Boolean.valueOf(input));
+            } else if (Byte.class.equals(type)) {
+                result = type.cast(Byte.valueOf(input));
+            }
+        } catch (Exception e) {
+            printException(e);
+        }
+
+        return result;
     }
 
     /**
@@ -290,34 +344,22 @@ public class AssmusMenu {
      *     Double price = read(Double.class);
      * </code>
      */
-    protected  <T> T read(Class<?> type) {
-        T result = null;
+    protected  <T> T read(@NotNull Class<T> type) {
+        return read(type, null);
+    }
 
-        try {
-            if (String.class.equals(type)) {
-                result = (T) poggyScanner.nextLine();
-            } else if (Integer.class.equals(type)) {
-                result = (T) poggyScanner.nextInt();
-            } else if (Long.class.equals(type)) {
-                result = (T) poggyScanner.nextLong();
-            } else if (Short.class.equals(type)) {
-                result = (T) poggyScanner.nextShort();
-            } else if (BigInteger.class.equals(type)) {
-                result = (T) poggyScanner.nextBigInteger();
-            } else if (Double.class.equals(type)) {
-                result = (T) poggyScanner.nextDouble();
-            } else if (BigDecimal.class.equals(type)) {
-                result = (T) poggyScanner.nextBigDecimal();
-            } else if (Boolean.class.equals(type)) {
-                result = (T) poggyScanner.nextBoolean();
-            } else if (Byte.class.equals(type)) {
-                result = (T) poggyScanner.nextByte();
-            }
-        } catch (Exception e) {
-            System.err.println("Error: " + e);
-            System.err.println(Arrays.toString(e.getStackTrace()));
+    /**
+     * Prints an Exception and its stack trace to stdout.
+     * @param e Exception to be printed.
+     */
+    protected void printException(Exception e) {
+        System.out.printf("Error: %s\n", e);
+        for (StackTraceElement traceElement : e.getStackTrace()) {
+            System.out.printf(
+                    "\t%s: %s\n",
+                    traceElement.getClassName(),
+                    traceElement.getLineNumber()
+            );
         }
-
-        return result;
     }
 }

@@ -1,8 +1,9 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="Assmus-Menu:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/Assmus_Menu_jar</output-path>
+    <output-path>$PROJECT_DIR$/out/artifacts/AssmusMenu</output-path>
     <root id="archive" name="Assmus-Menu.jar">
       <element id="module-output" name="Assmus-Menu" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/annotations/23.0.0/annotations-23.0.0.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

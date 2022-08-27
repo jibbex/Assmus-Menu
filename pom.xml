@@ -4,9 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.michm</groupId>
+    <groupId>de.michm.menu</groupId>
     <artifactId>AssmusMenu</artifactId>
-    <version>0.6.9</version>
+    <version>0.7.1</version>
+    <name>${project.groupId}:${project.artifactId}</name>
 
     <properties>
         <maven.compiler.source>18</maven.compiler.source>
@@ -15,9 +16,10 @@
 
     <dependencies>
         <dependency>
-            <groupId>de.michm.scanner</groupId>
-            <artifactId>PoggyScanner</artifactId>
-            <version>1.0.0</version>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>23.0.0</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
@@ -33,18 +35,11 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>de.michm.menu.AssmusMenu</mainClass>
+                            <mainClass>de.michm.menu.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
-    <repositories>
-        <repository>
-            <id>project-local-repo</id>
-            <url>file://${project.basedir}/src/lib/</url>
-        </repository>
-    </repositories>
 </project>
