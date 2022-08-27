@@ -244,15 +244,14 @@ public class AssmusMenu {
         try {
             while (run) {
                 render();
-
+                boolean foundFlag = false;
                 String pattern = read(String.class);
 
-                if (pattern != null && onUnknownInput != null) {
-                    onUnknownInput.invoke(this);
-                } else {
+                if (pattern != null) {
                     for (Option option : options) {
                         if (option.getPattern().equals(pattern)) {
                             pattern = null;
+                            foundFlag = true;
                             Object[] args = new Object[]{};
 
                             if (option.getReturnType().getTypeName().equals("boolean")) {
@@ -262,6 +261,10 @@ public class AssmusMenu {
                                 option.invoke(this, args);
                             }
                         }
+                    }
+
+                    if (!foundFlag && onUnknownInput != null) {
+                        onUnknownInput.invoke(this);
                     }
                 }
             }
