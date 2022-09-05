@@ -153,31 +153,18 @@ public class AssmusMenu implements AutoCloseable {
     }
 
     /**
-     * Creates an underline consisting of "=" for the passed
-     * String.
+     * Creates an underline consisting of "=" with the passed
+     * length.
      *
-     * @param text <String>
+     * @param length <int>
      * @return <String>
      */
-    private String getUnderline(String text) {
+    private String getUnderline(int length) {
         final StringBuilder builder = new StringBuilder();
-        text.chars().forEach(e -> builder.append("="));
-        return builder.toString();
-    }
-
-    /**
-     * Creates an underline consisting of "=" for the passed
-     * String. Multiplies size x times of the original length.
-     * @param text <String>
-     * @param multiplier <int> length x times
-     * @return <String>
-     */
-    private String getUnderline(String text, int multiplier) {
-        String underline = getUnderline(text);
-        for (int i = 0; i < multiplier; i++) {
-            underline += underline;
+        for (int i = 0; i < length; i++) {
+            builder.append("=");
         }
-        return underline + "\n";
+        return builder + "\n";
     }
 
     /**
@@ -195,10 +182,12 @@ public class AssmusMenu implements AutoCloseable {
 
     /**
      * Prints the resulting menu in std out.
+     *
+     * @param underline String "=======..." as underline for title separation.
      */
-    private void render() throws IOException, InterruptedException {
+    private void render(String underline) throws IOException, InterruptedException {
         clear();
-        System.out.printf("\n%s\n%s", title, getUnderline(title, 2));
+        System.out.printf("\n%s\n%s", title, underline);
 
         for (Option option : options) {
             String optText = "   " +
@@ -214,6 +203,18 @@ public class AssmusMenu implements AutoCloseable {
     }
 
     /**
+     * Prints the resulting menu in std out. Creates an underline with the
+     * double length of title property.
+     *
+     * Deprecated:
+     * Creating a new underline on each draw iteration is inefficiently.
+     */
+    @Deprecated
+    private void render() throws IOException, InterruptedException {
+        render(getUnderline(title.length() * 2));
+    }
+
+    /**
      * The run method is called from your `public static void main()` method.
      *
      * <code>
@@ -225,27 +226,35 @@ public class AssmusMenu implements AutoCloseable {
      *       }
      * </code>
      *
-     * The run variable of the main loop, the BufferedReader instance,
-     * both or nothing is passed to the called method.
-     *
-     * If the return type of the invoked method is boolean, the run
-     * variable will be set to the return value.
+     * If the return type of the invoked method is boolean, the run variable will
+     * be set to the return value.
      */
     public void run() {
         boolean run = true;
+        String underline = getUnderline(title.length() * 2);
 
         try {
             while (run) {
-                render();
+                render(underline);
                 boolean foundFlag = false;
                 String pattern = read(String.class, "\n > ");
 
-                if (pattern != null) {
+                if (pattern != null && !pattern.isEmpty()) {
                     for (Option option : options) {
                         if (option.getPattern().equals(pattern)) {
                             pattern = null;
                             foundFlag = true;
-                            Object[] args = new Object[]{};
+
+                            Class<?>[] argTypes = option.getParameterTypes();
+                            Object[] args = new Object[argTypes.length];
+
+                            for (int i = 0; i < argTypes.length; i++) {
+                                if (BufferedReader.class.equals(argTypes[i])) {
+                                    args[i] = reader;
+                                } else {
+                                    throw new IllegalArgumentException("Unknown argument");
+                                }
+                            }
 
                             if (option.getReturnType().getTypeName().equals("boolean")) {
                                 // Reads back run variable
@@ -255,10 +264,10 @@ public class AssmusMenu implements AutoCloseable {
                             }
                         }
                     }
+                }
 
-                    if (!foundFlag && onUnknownInput != null) {
-                        onUnknownInput.invoke(this);
-                    }
+                if (!foundFlag) {
+                    onUnknownInput.invoke(this);
                 }
             }
         } catch (Exception e) {
@@ -348,6 +357,8 @@ public class AssmusMenu implements AutoCloseable {
     protected void printException(Exception e) {
         System.out.printf("Error: %s\n", e);
         e.printStackTrace();
+        System.err.println("\n\tHit return to continue...");
+        read(String.class);
     }
 
     /**
