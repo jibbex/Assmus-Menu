@@ -25,10 +25,11 @@ import java.util.Objects;
  * It will be created in the ConsoleMenu constructor from an annotated
  * method of the derived class.
  */
-public class Option {
-    private String name;
-    private String pattern;
-    private Method action;
+
+class Option {
+    final private String name;
+    final private String pattern;
+    final private Method action;
 
     /**
      * The constructor expects 3 parameters: The name of the option,
@@ -72,15 +73,13 @@ public class Option {
     }
 
     /**
-     * Uses Java reflection to create an instance of ConsoleMenu and invokes
-     * the method which reference is stored in action. The Object array args
-     * will be passed.
+     * Uses Java reflection to invoke the method, which reference is stored in action,
+     * of the passed AssmusMenu instance. Any further argument will be passed to the
+     * invoked method.
      *
      * @param args <Object[]>
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
      */
-    public Object invoke(AssmusMenu instance, Object[] args) throws InvocationTargetException, IllegalAccessException {
+    public Object invoke(AssmusMenu instance, Object ... args) throws InvocationTargetException, IllegalAccessException {
         return action.invoke(instance, args);
     }
 
