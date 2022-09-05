@@ -6,7 +6,7 @@
 
     <groupId>de.michm.menu</groupId>
     <artifactId>AssmusMenu</artifactId>
-    <version>0.7.1</version>
+    <version>0.7.2</version>
     <name>${project.groupId}:${project.artifactId}</name>
 
     <properties>
