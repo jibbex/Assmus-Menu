@@ -8,27 +8,33 @@ Generates from a set of annotated Methods a menu for your CLI application. There
 
 ```java
 class App extends AssmusMenu {
-    App(String title) {
+    public App(String title) throws AlreadyBoundException {
         super(title);
     }
 
-    @MenuOption(name = "Help", pattern = "h")
-    public void help() {        
+    @MenuOption(name = "Info", pattern = "i")
+    void info() throws IOException, InterruptedException {
         clear(); // Clears the console output.
-        System.out.println("Hello World");
-        System.out.println("Hit any key to continue...");
-        read(String.class); 
+        System.out.println("Information");
+        System.out.println("Hit return to continue...");
+        read(String.class);
     }
 
     @MenuOption(name = "Quit", pattern = "q")
-    public boolean quit() {
+    boolean quit() throws IOException, InterruptedException {
         clear();
-        System.out.print("Do you want to exit? (y/n): ");
-        boolean exit = false;
-        String input = read(String.class);
-        // If a boolean is returned, the run variable of 
+        String input = read(String.class, "Do you want to exit? (y/n): ");
+        // If a bool is returned, the run variable of 
         // the main loop will be set to its inverse value.
         return input.equalsIgnoreCase("y");
+    }
+
+    @OnUnknownInput
+    public void onError() throws IOException, InterruptedException {
+        clear();
+        System.out.println("Your input couldn't recognized.");
+        System.out.println("Hit return to continue...");
+        read(String.class);
     }
 }
 ```
@@ -39,10 +45,10 @@ class App extends AssmusMenu {
 class Main {
     public static void main(String[] args) {
         try {
-            App app = new App("MY COOL CLI APP");
+            App app = new App("Awesome App");
             app.run(); // Starts the application.
         } catch (Exception e) {
-            System.err.println(e.getLocalizedMessage());
+            e.printStackTrace();
         }
     }
 }
@@ -51,9 +57,9 @@ class Main {
 *Output*
 
 ```bash
- MY COOL CLI APP
- =============================================
-   (h) Help
+Awesome App
+======================
+   (i) Info
    (q) Quit
 
  >
@@ -91,17 +97,22 @@ class App extends AssmusMenu {
     }
 
     @MenuOption(name = "Add", pattern = "a")
-    public void add() {        
-        clear();
-        System.out.print("Name: ");
-        String name = read(String.class);
-        System.out.print("Age: ");
-        int age = read(Integer.class);
-        System.out.print("Height in cm: ");
-        double height = read(Double.class);
-        clear();
-        System.out.println("Name: " + name + ", Age: " + age + ", height: " + height + " cm");
-        read(String.class);
+    public void add() {
+        try {
+            clear();
+
+            String name = read(String.class, "Name: ");
+            int age = read(Integer.class, "Age: ");
+            double height = read(Double.class, "Height in cm: ");
+
+            clear();
+
+            System.out.println("name: " + name + ", age: " + age + ", height: " + height + " cm");
+            read(String.class);
+        } catch (Exception e) {
+            printException(e);
+            add();
+        }
     }
 }
 ```
@@ -124,10 +135,10 @@ class App extends AssmusMenu {
     }
 
     @OnUnknownInput
-    public void onError() {
+    public void onError() throws IOException, InterruptedException {
         clear();
         System.out.println("Your input couldn't recognized.");
-        System.out.println("Hit any key to continue...");
+        System.out.println("Hit return to continue...");
         read(String.class);
     }
 }
