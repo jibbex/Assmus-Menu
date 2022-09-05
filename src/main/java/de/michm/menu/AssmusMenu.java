@@ -16,8 +16,6 @@
 
 package de.michm.menu;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -25,6 +23,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.rmi.AlreadyBoundException;
 import java.util.ArrayList;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The class ConsoleMenu is extended by a child class with the methods of the individual options.
@@ -57,7 +56,7 @@ import java.util.ArrayList;
  *     }
  * </code>
  */
-public class AssmusMenu {
+public class AssmusMenu implements AutoCloseable {
     final private String title;
     final private ArrayList<Option> options;
     final private Method onUnknownInput;
@@ -183,9 +182,6 @@ public class AssmusMenu {
 
     /**
      * Tries to clear stdout.
-     *
-     * @throws IOException
-     * @throws InterruptedException
      */
     public static void clear() throws IOException, InterruptedException {
         final String os = System.getProperty("os.name");
@@ -193,15 +189,12 @@ public class AssmusMenu {
         if (os.contains("Windows")) {
             new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
         } else {
-            Runtime.getRuntime().exec("clear");
+            new ProcessBuilder("bash", "clear").inheritIO().start().waitFor();
         }
     }
 
     /**
      * Prints the resulting menu in std out.
-     *
-     * @throws IOException
-     * @throws InterruptedException
      */
     private void render() throws IOException, InterruptedException {
         clear();
@@ -354,12 +347,14 @@ public class AssmusMenu {
      */
     protected void printException(Exception e) {
         System.out.printf("Error: %s\n", e);
-        for (StackTraceElement traceElement : e.getStackTrace()) {
-            System.out.printf(
-                    "\t%s: %s\n",
-                    traceElement.getClassName(),
-                    traceElement.getLineNumber()
-            );
-        }
+        e.printStackTrace();
+    }
+
+    /**
+     * Closes the BufferedReader on disposing.
+     */
+    @Override
+    public void close() throws Exception {
+        reader.close();
     }
 }
