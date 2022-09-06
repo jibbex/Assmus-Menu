@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The class ConsoleMenu is extended by a child class with the methods of the individual options.
+ * The class AssmusMenu is extended by a child class with the methods of the individual options.
  * The annotation @MenuOption defines the name in the menu and which string must be entered for
  * the selection. You can now create an instance of your derived class in the entry point method
  * of your Java application and call the object's run method.
