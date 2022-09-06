@@ -159,12 +159,9 @@ public class AssmusMenu implements AutoCloseable {
      * @param length <int>
      * @return <String>
      */
+    @Deprecated
     private String getUnderline(int length) {
-        final StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < length; i++) {
-            builder.append("=");
-        }
-        return builder + "\n";
+        return "=".repeat(Math.max(0, length)) + "\n";
     }
 
     /**
@@ -231,7 +228,7 @@ public class AssmusMenu implements AutoCloseable {
      */
     public void run() {
         boolean run = true;
-        String underline = getUnderline(title.length() * 2);
+        String underline = "=".repeat(Math.max(0, title.length() * 2)) + "\n";
 
         try {
             while (run) {
